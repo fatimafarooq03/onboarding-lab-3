@@ -1,42 +1,82 @@
 #include <VExercise1.h>
 #include <cstdint>
 
-int main() {
  // VExercise1 model;
+ 
 
-  void test_op(uint8_t code, uint8_t(op)(uint8_t, uint8_t)) {
+bool test(uint8_t op)
+{
   VExercise1 model;
-  model.op = code;
+  model.op = op;
   model.a = 0;
   model.b = 0;
+  while(++model.b)
+  {
+    while(++model.a)
+    {
+       model.eval();
+       uint8_t result; 
+       if (op == 0)
+       {
+        result = model.a^model.b; 
+       }
 
-  do {
-    do {
-      model.eval();
-      uint8_t result {op(model.a, model.b)};
-      REQUIRE(result == model.out);
-    } while(++model.b);
-  } while(++model.a);
+       else if (op==1)
+       {
+        result = model.a << model.b; 
+       }
+
+       else if (op==2)
+       {
+        result = model.a % model.b; 
+       }
+
+       else if (op==3)
+       {
+        result = ~(model.a & model.b); 
+       }
+
+       else
+       {
+        return false;
+       }
+      
+      if (model.out != result)
+      {
+        return false;
+      }
+    }
+  }
+
+
+  return true; 
+
 }
 
+int main()
+{
 
-TEST_CASE("Opcode 0, bitwise XOR") {
-  test_op(0, [](uint8_t a, uint8_t b) -> uint8_t { return a ^ b; });
-}
+  if (!(test(0)))
+  {
+    return 1; 
+  }
 
-TEST_CASE("Opcode 1, left shift") {
-  test_op(1, [](uint8_t a, uint8_t b) -> uint8_t { return a << b; });
-}
+  else if (!(test(1)))
+  {
+    return 1; 
+  }
 
-TEST_CASE("Opcode 2, modulus") {
-  test_op(2, [](uint8_t a, uint8_t b) -> uint8_t { return a % b; });
-}
+  else if (!(test(2)))
+  {
+    return 1; 
+  }
 
-TEST_CASE("Opcode 3, Or") {
-  test_op(3, [](uint8_t a, uint8_t b) -> uint8_t { return ~(a & b); });
-}
+  else if (!(test(3)))
+  {
+    return 1; 
+  }
 
-
+return 0; 
 
 };
 
